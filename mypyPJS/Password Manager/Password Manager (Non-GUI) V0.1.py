@@ -19,7 +19,6 @@ fav_number = ""
 color = ""
 phrase = ""
 
-
 def regen():
     re_roll = [origin,fav_number,color,phrase]
     random.shuffle(re_roll)
@@ -35,7 +34,11 @@ while mainmenu:
     print("(2) Store Password to Vault (Coming Soon)")
     print("(3) Access Password Vault (Coming Soon)")
     print("(4) Quit")
-    choice = int(input("> "))
+    try:
+        choice = int(input("> "))
+    except ValueError:
+        print("Use a number!!")
+        input("Press enter to continue")
 
 #MENU CHOICE 1
 
@@ -49,28 +52,33 @@ while mainmenu:
             origin = input("What is your background? ")
             fav_number = input("Type a favorite number ")
             color = input("Type your favorite color(s) ")
-            phrase = input("Type a phrase you'd like to be included in your password, something you will always remember ")
+            phrase = input("Type a phrase you'd like to be included in your password ")
             print("Generating....")
             print()
             regen()
             print()
-            choice = int(input("Type 1 to return to main menu , or, type 2 and press enter to re-roll "))
+            try:
+                choice = int(input("Type 1 to return to main menu , or, type 2 and press enter to re-roll "))
+            except ValueError:
+                print("Invalid Choice!")
+                input("Press enter to return to main menu")
 
             if choice == 1:
                 newpassword = False
                 mainmenu = True
+
 # IF RE-ROLLING
             elif choice == 2:
                 did_reroll = True
                 generator = False
                 newpassword = False
+
             else:
-                if choice > 2 or choice < 1:
-                    print("Invalid Option!")
-                choice = int(input("Type 1 to return to main menu , or, type 2 and press enter to re-roll "))
+                print("Invalid Option!")
                 generator = False
                 newpassword = False
                 did_reroll = True
+                choice = int(input("Type 1 to return to main menu , or, type 2 and press enter to re-roll "))
 
 # WHILE RE-ROLLING
         while did_reroll:
@@ -87,13 +95,36 @@ while mainmenu:
                 did_reroll = False
                 generator = False
                 mainmenu = True
+
             else:
-                choice_sub < 1 or choice_sub > 2
+                #choice_sub != 1 or not(2 != choice_sub)
                 print("Invalid option!")
-                choice_sub = input("Press enter to continue")
-                did_reroll = True
+                input("Press enter to re-roll")
+                #did_reroll = True
+
+did_consent = False
+is_IDValid = False
+has_ID = False
+
+def getvault():
+    os.path.exists('vaultkey.txt')
+    if os.path.exists:
+        print("Welcome back!")
+    elif
+    print("No vault key found! Create a new one?")
+
+vault_choice = ""
+input("Type Yes or "Y" to create a new key, or press type No or "N" to return to main menu:> ")
+
+def answer
 
 #MENU CHOICE 2
+
+    if choice == 2:
+        vault = True
+        getvault()
+
+
 
     if choice == 4:
         quit()
