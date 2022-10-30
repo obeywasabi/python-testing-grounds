@@ -9,12 +9,26 @@ input("Press any key to continue")
 #def clear():
 #   os.system("cls")
 
+main_menu_prompts = [
+    "What would you like to do?",
+    "(1) Create new password",
+    "(2) Store password to Vault",
+    "(3) Access password Vault",
+    "(4) Quit"
+]
+
+choice_prompts = [
+    "Press 1 to return to main menu, or press 2 and press Enter to shuffle generated password > ",
+    "Press 1 to shuffle again, or press 2 and press Enter to return to main menu > ",
+
+]
+
 run = True
 mainmenu = False
 menu_state = 0
 newpassword = False
 vault = False
-did_reroll = False
+did_shuffle = False
 menu_choice = ""
 
 #USER Variables
@@ -26,14 +40,13 @@ did_consent = False
 is_IDValid = False
 has_ID = False
 
+def gen():
+    shuffle = [origin,fav_number,color,phrase]
+    random.shuffle(shuffle)
+    result = ''.join(str(item) for item in shuffle)
+    print("Your new password is" + result +"$")
 
-def regen():
-    re_roll = [origin,fav_number,color,phrase]
-    random.shuffle(re_roll)
-    result = ''.join(str(item) for item in re_roll)
-    print("Your new password is" + result,"$")
-
-def getvault():
+def get_key():
     print("Checking if key file exits....")
     result = os.path.exists('key.txt')
 
@@ -48,13 +61,14 @@ def getvault():
 while run:
     mainmenu = True
     while mainmenu and menu_state == 0:
-        print("What would you like to do?")
+        print(main_menu_prompts[0])
         print()
-        print("(1) Create New Password")
-        print("(2) Store Password to Vault (Coming Soon)")
-        print("(3) Access Password Vault (Coming Soon)")
-        print("(4) Quit")
+        print(main_menu_prompts[1])
+        print(main_menu_prompts[2])
+        print(main_menu_prompts[3])
+        print(main_menu_prompts[4])
         print()
+
         try:
             menu_choice = int(input("> "))
         except ValueError:
@@ -89,10 +103,10 @@ while run:
         phrase = input("Type a phrase you'd like to be included in your password ")
         print("Generating....")
         print()
-        regen()
+        gen()
         print()
         try:
-            menu_choice = int(input("Type 1 to return to main menu , or, type 2 and press enter to re-roll "))
+            menu_choice = int(input(choice_prompts[0]))
         except ValueError:
             print("Invalid input! Press enter to return to main menu")
             input()
@@ -105,7 +119,7 @@ while run:
 
         elif menu_choice == 2:
             newpassword = False
-            did_reroll = True
+            did_shuffle = True
             menu_state = menu_state + 1
 
         else:
@@ -115,13 +129,13 @@ while run:
 
 
 # WHILE RE-ROLLING
-    while did_reroll and menu_state == 2:
-        print("Re-rolling....")
-        regen()
+    while did_shuffle and menu_state == 2:
+        print("Shuffling....")
+        gen()
         choice_sub = ""
 
         try:
-            choice_sub = int(input("Type 1 to re-roll or type 2 to return to main menu "))
+            choice_sub = int(input(choice_prompts[1]))
         except ValueError:
             print("Not a valid option, press enter to re-roll")
             input()
@@ -129,22 +143,22 @@ while run:
 
         if choice_sub == 1:
             newpassword = False
-            regen()
+            gen()
 
         elif choice_sub == 2:
             mainmenu = True
             menu_state = menu_state - 2
-            did_reroll = False
+            did_shuffle = False
 
         else:
             print("Invalid option!")
-            input("Press enter to re-roll")
+            input("Press enter to shuffle again")
 
 ## WHILE IN VAULT
 
     while vault and menu_state == 5:
-        getvault()
-        vault_choice = int(input("Type 1 to create a new key, or press 2 to return to main menu:> "))
+        get_key()
+        vault_choice = int(input("Press 1 to create a new key, or press 2 to return to main menu > "))
 
         if vault_choice == 1:
             key = random.seed(10)
