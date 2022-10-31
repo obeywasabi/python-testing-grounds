@@ -2,12 +2,12 @@
 import random
 import os
 
-print("Password manager (non-gui) v.0.3a by Alex A")
+print("Password manager (non-gui) v.0.3c by Alex A")
 print()
 input("Press any key to continue")
 
-#def clear():
-#   os.system("cls")
+def clear():
+   os.system("cls")
 
 main_menu_prompts = [
     "What would you like to do?",
@@ -59,6 +59,7 @@ def get_key():
 
 # MAIN MENU OPTIONS
 while run:
+    clear()
     mainmenu = True
     while mainmenu and menu_state == 0:
         print(main_menu_prompts[0])
@@ -80,11 +81,13 @@ while run:
             newpassword = True
             mainmenu = False
             menu_state = menu_state + 1
+            clear()
 
         elif menu_choice == 2:
             vault = True
             menu_state = menu_state + 5
             mainmenu = False
+            clear()
 
         elif menu_choice == 4:
             quit()
@@ -92,6 +95,7 @@ while run:
         if menu_choice > 4:
             print("Not a valid choice! Press enter to continue")
             input()
+            clear()
 
 # NEW PASSWORD STATE
     while newpassword and menu_state == 1:
@@ -130,6 +134,7 @@ while run:
 
 # WHILE RE-ROLLING
     while did_shuffle and menu_state == 2:
+        clear()
         print("Shuffling....")
         gen()
         choice_sub = ""
@@ -139,13 +144,16 @@ while run:
         except ValueError:
             print("Not a valid option, press enter to re-roll")
             input()
+            clear()
             break
 
         if choice_sub == 1:
+            clear()
             newpassword = False
             gen()
 
         elif choice_sub == 2:
+            clear()
             mainmenu = True
             menu_state = menu_state - 2
             did_shuffle = False
@@ -153,14 +161,17 @@ while run:
         else:
             print("Invalid option!")
             input("Press enter to shuffle again")
+            clear()
 
 ## WHILE IN VAULT
 
     while vault and menu_state == 5:
+        clear()
         get_key()
         vault_choice = int(input("Press 1 to create a new key, or press 2 to return to main menu > "))
 
         if vault_choice == 1:
+            clear()
             key = random.seed(10)
             file = open('key.txt', 'w')
             file.write("key")
@@ -169,6 +180,7 @@ while run:
             input("Press Enter to continue to Password Vault")
 
         elif vault_choice == 2:
+            clear()
             vault = False
             menu_state = menu_state - 5
             mainmenu = True
