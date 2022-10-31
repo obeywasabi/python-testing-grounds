@@ -1,13 +1,21 @@
-## Password Generator - Non-GUI Based, Alex Arias 10.27.2022
+## NoFrillsPasswordManager - Non-GUI Based, Alex Arias 10.27.2022
 import random
 import os
 
-print("Password manager (non-gui) v.0.3c by Alex A")
+print("NoFrillsPasswordManager (non-GUI) v.0.3c by Alex A")
 print()
 input("Press any key to continue")
 
 def clear():
    os.system("cls")
+   os.system("clear")
+
+def gen():
+    shuffle = [origin,fav_number,color,phrase]
+    random.shuffle(shuffle)
+    result = ''.join(str(item) for item in shuffle)
+    print("Your new password is" + result +"$")
+
 
 main_menu_prompts = [
     "What would you like to do?",
@@ -23,37 +31,33 @@ choice_prompts = [
 
 ]
 
-run = True
+
+## MAIN variables
+menu_choice = ""
+exist = os.path.exists('key.txt')
 mainmenu = False
+run = True
 menu_state = 0
 newpassword = False
-vault = False
+vault_main = False
 did_shuffle = False
-menu_choice = ""
 
 #USER Variables
 origin = ""
 fav_number = ""
 color = ""
 phrase = ""
-did_consent = False
-is_IDValid = False
-has_ID = False
 
-def gen():
-    shuffle = [origin,fav_number,color,phrase]
-    random.shuffle(shuffle)
-    result = ''.join(str(item) for item in shuffle)
-    print("Your new password is" + result +"$")
+
 
 def get_key():
     print("Checking if key file exits....")
-    result = os.path.exists('key.txt')
+    print("Does key file exist?: " + str(exist))
 
-    if result:
-        print("Welcome back!")
+    if exist:
+        print("Key file found!\nWelcome back!")
 
-    elif result == False:
+    if not exist:
         print("No key file found!")
 
 
@@ -84,10 +88,10 @@ while run:
             clear()
 
         elif menu_choice == 2:
-            vault = True
+            vault_main = True
             menu_state = menu_state + 5
             mainmenu = False
-            clear()
+            run = False
 
         elif menu_choice == 4:
             quit()
@@ -163,24 +167,39 @@ while run:
             input("Press enter to shuffle again")
             clear()
 
-## WHILE IN VAULT
+## Vault Main variables
 
-    while vault and menu_state == 5:
-        clear()
-        get_key()
-        vault_choice = int(input("Press 1 to create a new key, or press 2 to return to main menu > "))
+did_consent = False
+is_keyValid = False
+has_Key = False
 
-        if vault_choice == 1:
-            clear()
-            key = random.seed(10)
-            file = open('key.txt', 'w')
-            file.write("key")
-            file.close()
-            print("Key successfully generated!")
-            input("Press Enter to continue to Password Vault")
+#Check for key
 
-        elif vault_choice == 2:
-            clear()
-            vault = False
-            menu_state = menu_state - 5
-            mainmenu = True
+def check_for_key():
+    print("Checking if key file exits....")
+    print("Does key file exist?: " + str(exist))
+
+    if exist:
+        print("Key file found!\nWelcome back!")
+        input("Press enter to access Vault menu")
+
+    if not exist:
+        print("No key file found!")
+        input("Please generate a new one to securely store passwords.\n Press Enter to continue to Vault menu.")
+
+
+## Main Vault menu
+
+while vault_main and menu_state == 5:
+    clear()
+    print("Welcome to Your Vault")
+    print()
+    print("(1) View Passwords")
+    print("(2) Store new Passwords")
+    print("(3) Generate new Storage key")
+    print("(4) Delete Entries")
+    print("(5) Return to Main Menu")
+    print("(6) Quit")
+    print()
+    input("")
+    
