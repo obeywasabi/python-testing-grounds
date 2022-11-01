@@ -11,14 +11,14 @@ def clear():
    os.system("clear")
 
 def gen():
-    shuffle = [origin,fav_number,color,phrase]
+    shuffle = [name, fav_number, color, phrase]
     random.shuffle(shuffle)
     result = ''.join(str(item) for item in shuffle)
     print("Your new password is" + result +"$")
 
 
-main_menu_prompts = [
-    "What would you like to do?",
+menu_prompts = [
+    "What would you like to do?\n",
     "(1) Create new password",
     "(2) Store password to Vault",
     "(3) Access password Vault",
@@ -28,6 +28,15 @@ main_menu_prompts = [
 choice_prompts = [
     "Press 1 to return to main menu, or press 2 and press Enter to shuffle generated password > ",
     "Press 1 to shuffle again, or press 2 and press Enter to return to main menu > ",
+
+]
+
+newpass_prompts = [
+    "USAGE: \nFill in these quick questions to generate a new password, realistically you can input anything "
+    "into the lines, and the generator will still generate and shuffle all of your inputs.\n",
+    "What is your name? > ",
+    "Type a favorite or rememberable number > ",
+
 
 ]
 
@@ -43,11 +52,10 @@ vault_main = False
 did_shuffle = False
 
 #USER Variables
-origin = ""
+name = ""
 fav_number = ""
 color = ""
 phrase = ""
-
 
 
 def get_key():
@@ -66,16 +74,14 @@ while run:
     clear()
     mainmenu = True
     while mainmenu and menu_state == 0:
-        print(main_menu_prompts[0])
-        print()
-        print(main_menu_prompts[1])
-        print(main_menu_prompts[2])
-        print(main_menu_prompts[3])
-        print(main_menu_prompts[4])
-        print()
+        print(menu_prompts[0])
+        print(menu_prompts[1])
+        print(menu_prompts[2])
+        print(menu_prompts[3])
+        print(menu_prompts[4])
 
         try:
-            menu_choice = int(input("> "))
+            menu_choice = int(input("\n> "))
         except ValueError:
             print("Invalid Option!")
             input("Press enter to continue")
@@ -104,9 +110,9 @@ while run:
 # NEW PASSWORD STATE
     while newpassword and menu_state == 1:
         menu_choice = ""
-        print("Okay, you want to generate a new password, fill in these quick questions to generate")
-        origin = input("What is your background? ")
-        fav_number = input("Type a favorite number ")
+        print(newpass_prompts[0])
+        name = input(newpass_prompts[1])
+        fav_number = input(newpass_prompts[2])
         color = input("Type your favorite color(s) ")
         phrase = input("Type a phrase you'd like to be included in your password ")
         print("Generating....")
