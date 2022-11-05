@@ -1,3 +1,8 @@
 
 *.xml
 python-stuff/Password Manager/.idea/Password Manager.iml
+*.toc
+*.pyc
+python-stuff/Password Manager/build/PasswordManagerNonGUI/xref-PasswordManagerNonGUI.html
+python-stuff/Password Manager/build/PasswordManagerNonGUI/warn-PasswordManagerNonGUI.txt
+python-stuff/Password Manager/build/PasswordManagerNonGUI/PYZ-00.pyz
