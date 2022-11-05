@@ -6,3 +6,7 @@ python-stuff/Password Manager/.idea/Password Manager.iml
 python-stuff/Password Manager/build/PasswordManagerNonGUI/xref-PasswordManagerNonGUI.html
 python-stuff/Password Manager/build/PasswordManagerNonGUI/warn-PasswordManagerNonGUI.txt
 python-stuff/Password Manager/build/PasswordManagerNonGUI/PYZ-00.pyz
+python-stuff/Password Manager/PasswordManagerNonGUI.spec
+python-stuff/Password Manager/build/PasswordManagerNonGUI/PasswordManagerNonGUI.pkg
+python-stuff/Password Manager/build/PasswordManagerNonGUI/PasswordManagerNonGUI.exe.manifest
+python-stuff/Password Manager/build/PasswordManagerNonGUI/PasswordManagerNonGUI.exe.manifest
