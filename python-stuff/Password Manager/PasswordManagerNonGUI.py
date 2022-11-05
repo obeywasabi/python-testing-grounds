@@ -1,20 +1,40 @@
 ## NoFrillsPasswordManager - Non-GUI Based, Alex Arias 10.27.2022
 import random
 import os
+import base64
 
-print("NoFrillsPasswordManager (non-GUI) v.0.3c by Alex A")
+print("NoFrillsPasswordManager (non-GUI) v.0.5a by Alex A")
 print()
 input("Press any key to continue")
 
 def clear():
    os.system("cls")
-   os.system("clear")
+   #os.system("clear")
 
 def gen():
     shuffle = [name, fav_number, color, phrase]
     random.shuffle(shuffle)
     result = ''.join(str(item) for item in shuffle)
     print("Your new password is" + result +"$")
+
+def gen_key():
+    keygen = input("Enter a 4-digit pin number to associate with your key file")
+    user_key = open("key.ini", "wb")
+    encoded = base64.b64encode(keygen.encode("utf-8"))
+    user_key.write(encoded)
+    logins.append(encoded)
+    user_key.close()
+    input("Key file successfully generated, Press enter to return to main menu")
+    clear()
+
+def decode():
+   with open("key.ini", "r") as f:
+       result = f.readline()
+       decoded = base64.b64decode(result).decode("utf-8")
+       global secretKey
+       secretKey = decoded
+       f.close()
+       clear()
 
 
 menu_prompts = [
@@ -40,34 +60,31 @@ newpass_prompts = [
 
 ]
 
+logins = []
 
 ## MAIN variables
 menu_choice = ""
-exist = os.path.exists('key.txt')
+exist = os.path.exists("key.ini")
 mainmenu = False
 run = True
 menu_state = 0
 newpassword = False
+key = False
 vault_main = False
 did_shuffle = False
+
+## Vault Main variables
+
+#did_consent = False
+#did_key_run = 0
 
 #USER Variables
 name = ""
 fav_number = ""
 color = ""
 phrase = ""
-
-
-def get_key():
-    print("Checking if key file exits....")
-    print("Does key file exist?: " + str(exist))
-
-    if exist:
-        print("Key file found!\nWelcome back!")
-
-    if not exist:
-        print("No key file found!")
-
+#username = ""
+#pin = ""
 
 # MAIN MENU OPTIONS
 while run:
@@ -98,6 +115,7 @@ while run:
             menu_state = menu_state + 5
             mainmenu = False
             run = False
+            clear()
 
         elif menu_choice == 4:
             quit()
@@ -173,39 +191,45 @@ while run:
             input("Press enter to shuffle again")
             clear()
 
-## Vault Main variables
-
-did_consent = False
-is_keyValid = False
-has_Key = False
-
-#Check for key
-
-def check_for_key():
-    print("Checking if key file exits....")
-    print("Does key file exist?: " + str(exist))
-
-    if exist:
-        print("Key file found!\nWelcome back!")
-        input("Press enter to access Vault menu")
-
-    if not exist:
-        print("No key file found!")
-        input("Please generate a new one to securely store passwords.\n Press Enter to continue to Vault menu.")
-
+did_gen_key = exist
 
 ## Main Vault menu
 
 while vault_main and menu_state == 5:
-    clear()
-    print("Welcome to Your Vault")
-    print()
-    print("(1) View Passwords")
-    print("(2) Store new Passwords")
-    print("(3) Generate new Storage key")
-    print("(4) Delete Entries")
-    print("(5) Return to Main Menu")
-    print("(6) Quit")
-    print()
-    input("")
-    
+
+    if did_gen_key:
+        key = True
+
+    else:
+        clear()
+        print("You do not have a key file, to access the vault, please create one.")
+        input("Press enter to create one")
+        did_gen_key = True
+        clear()
+        gen_key()
+
+    while key:
+        print("Welcome to Your Vault")
+        #print()
+        print("(1) View Passwords")
+        print("(2) Store new Passwords")
+        print("(3) Generate a new Storage key")
+        print("(4) Delete Entries")
+        print("(5) Return to Main Menu")
+        print("(6) Quit")
+        print()
+        vault_choice = int(input("> "))
+
+        if vault_choice == 1:
+            decode()
+            pin_check = int(input("Enter your pin "))
+            if pin_check == int(secretKey):
+                print("YOU MADE IT TO THE NEXT PART OF THE SHENNANIGANS")
+            else:
+                print("INCORRECT")
+
+        else:
+            "No valid key file found! Please generate one, or generate a new one"
+
+        if vault_choice == 3:
+            gen_key()
