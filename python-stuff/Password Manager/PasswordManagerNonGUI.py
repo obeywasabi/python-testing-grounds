@@ -5,7 +5,7 @@ import base64
 import urllib.request
 import time
 
-currentVersion = "0.4a"
+currentVersion = "0.5a"
 URL = urllib.request.urlopen('https://raw.githubusercontent.com/obeywasabi/python-testing-grounds/main/python-stuff/Password%20Manager/version.html')
 
 data = URL.read()
