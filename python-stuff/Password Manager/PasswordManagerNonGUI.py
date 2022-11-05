@@ -6,17 +6,17 @@ import requests
 import urllib.request
 import time
 
-currentVersion = "0.5c"
+currentVersion = "0.6"
 URL = urllib.request.urlopen('https://raw.githubusercontent.com/obeywasabi/python-testing-grounds/main/python-stuff/Password%20Manager/version.html')
 
 data = URL.read()
 if (data == currentVersion):
     print("Up to date!")
 else:
-    print("App is not up to date! You are on version " + currentVersion + " but you could be on version " + (str(data)) + "!")
+    print("App is not up to date! You are on version " + currentVersion + " but you could be on version ", data ,"!")
     print("Downloading new version now!")
-    newVersion = requests.get("https://raw.githubusercontent.com/obeywasabi/python-testing-grounds/main/python-stuff/Password%20Manager/PasswordManagerNonGUI.py")
-    open("PasswordManagerNonGUI.py", "wb").write(newVersion.content)
+    newVersion = requests.get("https://github.com/obeywasabi/python-testing-grounds/blob/main/python-stuff/Password%20Manager/PasswordManagerNonGUI.exe?raw=true")
+    open("PasswordManagerNonGUI.exe", "wb").write(newVersion.content)
     print("New version downloaded, restarting in 5 seconds!")
     time.sleep(5)
     quit()
