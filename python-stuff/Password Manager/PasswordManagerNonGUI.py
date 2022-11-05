@@ -2,6 +2,7 @@
 import random
 import os
 import base64
+import requests
 import urllib.request
 import time
 
@@ -12,7 +13,7 @@ data = URL.read()
 if (data == currentVersion):
     print("App is up to date!")
 else:
-    print("App is not up to date! App is on version " + currentVersion + " but could be on version " + data + "!")
+    print("App is not up to date! App is on version " + currentVersion + " but could be on version " + (str(data) + "!")
     print("Downloading new version now!")
     newVersion = requests.get("https://raw.githubusercontent.com/obeywasabi/python-testing-grounds/main/python-stuff/Password%20Manager/PasswordManagerNonGUI.py")
     open("PasswordManagerNonGUI.py", "wb").write(newVersion.content)
