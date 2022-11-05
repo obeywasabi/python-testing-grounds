@@ -11,9 +11,9 @@ URL = urllib.request.urlopen('https://raw.githubusercontent.com/obeywasabi/pytho
 
 data = URL.read()
 if (data == currentVersion):
-    print("App is up to date!")
+    print("Up to date!")
 else:
-    print("App is not up to date! App is on version " + currentVersion + " but could be on version " + (str(data)) + "!")
+    print("App is not up to date! You are on version " + currentVersion + " but you could be on version " + (str(data)) + "!")
     print("Downloading new version now!")
     newVersion = requests.get("https://raw.githubusercontent.com/obeywasabi/python-testing-grounds/main/python-stuff/Password%20Manager/PasswordManagerNonGUI.py")
     open("PasswordManagerNonGUI.py", "wb").write(newVersion.content)
@@ -21,7 +21,7 @@ else:
     time.sleep(5)
     quit()
 
-print("NoFrillsPasswordManager (non-GUI) v.0.5a by Alex A")
+print("NoFrillsPasswordManager (non-GUI) by Alex A")
 print()
 input("Press any key to continue")
 
