@@ -15,8 +15,8 @@ if (data == currentVersion):
 else:
     print("App is not up to date! You are on version " + currentVersion + " but you could be on version " + data + "!")
     print("Downloading new version now!")
-    newVersion = requests.get("https://github.com/obeywasabi/python-testing-grounds/raw/main/python-stuff/Password%20Manager/PasswordManagerNonGUI.exe")
-    open("PasswordManagerNonGUI.exe", "wb").write(newVersion.content)
+    newVersion = requests.get("https://github.com/obeywasabi/python-testing-grounds/raw/main/python-stuff/Password%20Manager/PasswordManagerCLI.exe")
+    open("PasswordManagerCLI.exe", "wb").write(newVersion.content)
     print("New version downloaded, restarting in 5 seconds!")
     time.sleep(5)
     quit()
