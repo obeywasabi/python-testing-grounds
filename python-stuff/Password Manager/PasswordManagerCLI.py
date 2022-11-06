@@ -5,6 +5,7 @@ import base64
 import requests
 import urllib.request
 import time
+from cryptography.fernet import Fernet
 
 currentVersion = '0.7.4'
 
@@ -22,14 +23,19 @@ def getupdate():
         if choice == 1:
             print("Downloading new version now!")
             newVersion = requests.get("https://github.com/obeywasabi/python-testing-grounds/raw/main/python-stuff/Password%20Manager/PasswordManagerCLI.exe")
-            with open("PasswordManagerCLIv0.7.4.exe", "wb") as f:
+            with open("PasswordManagerCLI.exe", "wb") as f:
                 f.write(newVersion.content)
-                print("New version downloaded, restarting in 3 seconds!")
+                f.close()
+                print("New version downloaded, shutting in 3 seconds!")
                 time.sleep(3)
                 quit()
 
         if choice == 2:
             clear()
+            quit()
+
+        else:
+            print("Invalid option!")
             quit()
 
 print("NoFrillsPasswordManager (non-GUI) by Alex A")
@@ -57,6 +63,34 @@ def gen_key():
     input("Key file successfully generated, Press enter to return to main menu")
     clear()
 
+def vault_encoder():
+    #clear()
+    logins = []
+    service = input("First, add what service this password will belong to: ")
+    logins.append(service)
+    passwd = input("Now type in the password you'd like to save: ")
+    logins.append(passwd)
+    result = ''.join(map(str,logins))
+    encode = base64.b64encode(result)
+    print(encode)
+    input()
+    #with open('vault.json', 'w') as f:
+        #json.dump(encode, f, sort_keys=True)
+        #f.close()
+        #print("Password successfully saved")
+    #get_vault_list = open("vault.ini", "wb")
+    #user_input_service = input("First, add what service this password will belong to: ")
+    #encoder = base64.b64encode(user_input_service.encode("utf-8"))
+    #get_vault_list.write(encoder)
+    #get_vault_list.close()
+    #get_vault_list = open("vault.ini", "w")
+    #user_input_password = input("Now type in the password you'd like to save: ")
+    #pass_encoder = base64.b64encode(user_input_password.encode("utf-8"))
+    #get_vault_list.write("\n")
+    #get_vault_list.write((str([pass_encoder])))
+    #get_vault_list.close()
+    print("Stop here")
+    input()
 def decode():
    with open("key.ini", "r") as f:
        result = f.readline()
@@ -88,10 +122,7 @@ newpass_prompts = [
     "What is your name? > ",
     "Type a favorite or rememberable number > ",
 
-
 ]
-
-logins = []
 
 ## MAIN variables
 menu_choice = ""
@@ -143,11 +174,11 @@ while run:
             clear()
 
         elif menu_choice == 2:
+            clear()
             vault_main = True
             menu_state = menu_state + 5
             mainmenu = False
             run = False
-            clear()
 
         elif menu_choice == 4:
             getupdate()
@@ -248,6 +279,7 @@ while vault_main and menu_state == 5:
         gen_key()
 
     while key:
+        clear()
         print("Welcome to Your Vault")
         #print()
         print("(1) View Passwords")
@@ -260,15 +292,32 @@ while vault_main and menu_state == 5:
         vault_choice = int(input("> "))
 
         if vault_choice == 1:
+            clear()
             decode()
-            pin_check = int(input("Enter your pin "))
+            try:
+                pin_check = int(input("Enter your pin: > "))
+            except:
+                print("Please enter a valid option")
+                input("Press enter to continue...")
+                clear()
+                break
             if pin_check == int(secretKey):
+                clear()
                 print(vault_list)
+                input("\nPress any key to return to main menu..")
             else:
                 print("Pin does not match set pin!")
 
         else:
             "No valid key file found! Please generate one, or generate a new one"
+
+
+        if vault_choice == 2:
+            clear()
+            vault_encoder()
+            input("\nPassword successfully stored\n Press Enter to return to vault menu")
+            break
+
 
         if vault_choice == 3:
             gen_key()
