@@ -6,7 +6,7 @@ import requests
 import urllib.request
 import time
 
-currentVersion = '0.7'
+currentVersion = '0.7.2'
 URL = urllib.request.urlopen('https://raw.githubusercontent.com/obeywasabi/python-testing-grounds/main/python-stuff/Password%20Manager/version.txt')
 
 data = URL.read().decode('utf-8')
@@ -245,7 +245,7 @@ while vault_main and menu_state == 5:
             if pin_check == int(secretKey):
                 print("YOU MADE IT TO THE NEXT PART OF THE SHENNANIGANS")
             else:
-                print("INCORRECT")
+                print("Pin does not match set pin!")
 
         else:
             "No valid key file found! Please generate one, or generate a new one"
