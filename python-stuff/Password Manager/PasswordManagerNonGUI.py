@@ -6,7 +6,7 @@ import requests
 import urllib.request
 import time
 
-currentVersion = '0.7.1'
+currentVersion = '0.7.2'
 URL = urllib.request.urlopen('https://raw.githubusercontent.com/obeywasabi/python-testing-grounds/main/python-stuff/Password%20Manager/version.txt')
 
 data = URL.read().decode('utf-8')
