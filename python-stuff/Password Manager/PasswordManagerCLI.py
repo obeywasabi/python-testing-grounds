@@ -6,21 +6,31 @@ import requests
 import urllib.request
 import time
 
-currentVersion = '0.7.3'
-URL = urllib.request.urlopen('https://raw.githubusercontent.com/obeywasabi/python-testing-grounds/main/python-stuff/Password%20Manager/version.txt')
+currentVersion = '0.7.4'
 
-data = URL.read().decode('utf-8')
-if (data == currentVersion):
-    print("Up to date!")
-else:
-    print("App is not up to date! You are on version " + currentVersion + " but you could be on version " + data + "!")
-    print("Downloading new version now!")
-    newVersion = requests.get("https://github.com/obeywasabi/python-testing-grounds/raw/main/python-stuff/Password%20Manager/PasswordManagerCLI.exe")
-    with open("PasswordManagerCLIv0.7.3.exe", "wb") as f:
-        f.write(newVersion.content)
-        print("New version downloaded, restarting in 5 seconds!")
-        time.sleep(5)
+def getupdate():
+    URL = urllib.request.urlopen('https://raw.githubusercontent.com/obeywasabi/python-testing-grounds/main/python-stuff/Password%20Manager/version.txt')
+    data = URL.read().decode('utf-8')
+
+    if (data == currentVersion):
+        print("Up to date!")
         quit()
+
+    else:
+        print("App is not up to date! You are on version " + currentVersion + " but you could be on version " + data + "!")
+        choice = int(input("Do you want to update now? Press 1 for Yes and 2 for No: > "))
+        if choice == 1:
+            print("Downloading new version now!")
+            newVersion = requests.get("https://github.com/obeywasabi/python-testing-grounds/raw/main/python-stuff/Password%20Manager/PasswordManagerCLI.exe")
+            with open("PasswordManagerCLIv0.7.4.exe", "wb") as f:
+                f.write(newVersion.content)
+                print("New version downloaded, restarting in 3 seconds!")
+                time.sleep(3)
+                quit()
+
+        if choice == 2:
+            clear()
+            quit()
 
 print("NoFrillsPasswordManager (non-GUI) by Alex A")
 print()
@@ -62,7 +72,8 @@ menu_prompts = [
     "(1) Create new password",
     "(2) Store password to Vault",
     "(3) Access password Vault",
-    "(4) Quit"
+    "(4) Check for updates",
+    "(5) Quit"
 ]
 
 choice_prompts = [
@@ -116,6 +127,7 @@ while run:
         print(menu_prompts[2])
         print(menu_prompts[3])
         print(menu_prompts[4])
+        print(menu_prompts[5])
 
         try:
             menu_choice = int(input("\n> "))
@@ -138,9 +150,12 @@ while run:
             clear()
 
         elif menu_choice == 4:
-            quit()
+            getupdate()
 
-        if menu_choice > 4:
+        elif menu_choice == 5:
+                quit()
+
+        if menu_choice > 5:
             print("Not a valid choice! Press enter to continue")
             input()
             clear()
@@ -213,6 +228,10 @@ while run:
 
 did_gen_key = exist
 
+vault_list = ["content one", "comedy123",
+              "content 2", "shalissabrown"]
+
+
 ## Main Vault menu
 
 while vault_main and menu_state == 5:
@@ -244,7 +263,7 @@ while vault_main and menu_state == 5:
             decode()
             pin_check = int(input("Enter your pin "))
             if pin_check == int(secretKey):
-                print("YOU MADE IT TO THE NEXT PART OF THE SHENNANIGANS")
+                print(vault_list)
             else:
                 print("Pin does not match set pin!")
 
