@@ -40,59 +40,74 @@ def getupdate():
 
 print("NoFrillsPasswordManager (non-GUI) by Alex A")
 print()
-input("Press any key to continue")
+input("Press any auth to continue")
 
 
 def clear():
-   os.system("cls")
-   #os.system("clear")
+   #os.system("cls")
+   os.system("clear")
 
-def gen():
+
+def shuffle_pass():
     shuffle = [name, fav_number, color, phrase]
     random.shuffle(shuffle)
     result = ''.join(str(item) for item in shuffle)
     print("Your new password is" + result +"$")
 
-def gen_key():
-    keygen = input("Enter a 4-digit pin number to associate with your key file")
-    user_key = open("key.ini", "wb")
+
+def manifest():
+    keygen = input("Enter a 4-digit pin number to associate with your auth file")
+    user_key = open("auth.ini", "wb")
     encoded = base64.b64encode(keygen.encode("utf-8"))
     user_key.write(encoded)
-    logins.append(encoded)
     user_key.close()
+    gen_vault_key()
+    #encrypt_vault_file()
     input("Key file successfully generated, Press enter to return to main menu")
     clear()
 
-def vault_encoder():
-    #clear()
-    logins = []
-    service = input("First, add what service this password will belong to: ")
-    logins.append(service)
-    passwd = input("Now type in the password you'd like to save: ")
-    logins.append(passwd)
-    result = ''.join(map(str,logins))
-    encode = base64.b64encode(result)
-    print(encode)
-    input()
-    #with open('vault.json', 'w') as f:
-        #json.dump(encode, f, sort_keys=True)
-        #f.close()
-        #print("Password successfully saved")
-    #get_vault_list = open("vault.ini", "wb")
-    #user_input_service = input("First, add what service this password will belong to: ")
-    #encoder = base64.b64encode(user_input_service.encode("utf-8"))
-    #get_vault_list.write(encoder)
-    #get_vault_list.close()
-    #get_vault_list = open("vault.ini", "w")
-    #user_input_password = input("Now type in the password you'd like to save: ")
-    #pass_encoder = base64.b64encode(user_input_password.encode("utf-8"))
-    #get_vault_list.write("\n")
-    #get_vault_list.write((str([pass_encoder])))
-    #get_vault_list.close()
-    print("Stop here")
-    input()
-def decode():
-   with open("key.ini", "r") as f:
+## VAULT FUNCTIONS
+
+def gen_vault_key():
+    gen_key = Fernet.generate_key()
+    with open("enc.key", "wb") as enc:
+        enc.write(gen_key)
+
+
+def load_vault_key():
+    return open("enc.key", 'rb').read()
+
+
+def encrypt_vault_file():
+    with open("enc.key", 'rb') as enc:
+        key = enc.read()
+        fernet = Fernet(key)
+    with open("vault.csv", 'rb') as file:
+        original = file.read()
+        encrypted = fernet.encrypt(original)
+    with open("vault.csv", 'wb') as encrypted_vault:
+        encrypted_vault.write(encrypted)
+
+
+def decrypt_vault_file():
+    fernet = Fernet(key)
+    with open("vault.csv", 'rb') as enc_file:
+        encrypted = enc_file.read()
+        decrypted = fernet.decrypt(encrypted)
+        with open("vault.csv", 'wb') as dec_file:
+            dec_file.write(decrypted)
+
+#def view_dec_vault():
+
+
+
+
+
+#def add_pass_enc():
+
+
+def b64_decode():
+   with open("auth.ini", "r") as f:
        result = f.readline()
        decoded = base64.b64decode(result).decode("utf-8")
        global secretKey
@@ -126,12 +141,13 @@ newpass_prompts = [
 
 ## MAIN variables
 menu_choice = ""
-exist = os.path.exists("key.ini")
+exist = os.path.exists("auth.ini")
 mainmenu = False
 run = True
 menu_state = 0
 newpassword = False
-key = False
+auth = False
+key = Fernet.generate_key()
 vault_main = False
 did_shuffle = False
 
@@ -201,7 +217,7 @@ while run:
         phrase = input("Type a phrase you'd like to be included in your password ")
         print("Generating....")
         print()
-        gen()
+        shuffle_pass()
         print()
         try:
             menu_choice = int(input(choice_prompts[0]))
@@ -226,11 +242,11 @@ while run:
             mainmenu = True
 
 
-# WHILE RE-ROLLING
+# WHILE SHUFFLING AGAIN
     while did_shuffle and menu_state == 2:
         clear()
         print("Shuffling....")
-        gen()
+        shuffle_pass()
         choice_sub = ""
 
         try:
@@ -244,7 +260,7 @@ while run:
         if choice_sub == 1:
             clear()
             newpassword = False
-            gen()
+            shuffle_pass()
 
         elif choice_sub == 2:
             clear()
@@ -259,32 +275,29 @@ while run:
 
 did_gen_key = exist
 
-vault_list = ["content one", "comedy123",
-              "content 2", "shalissabrown"]
-
 
 ## Main Vault menu
 
 while vault_main and menu_state == 5:
 
     if did_gen_key:
-        key = True
+        auth = True
 
     else:
         clear()
-        print("You do not have a key file, to access the vault, please create one.")
+        print("You do not have a auth file, to access the vault, please create one.")
         input("Press enter to create one")
         did_gen_key = True
         clear()
-        gen_key()
+        manifest()
 
-    while key:
+    while auth:
         clear()
         print("Welcome to Your Vault")
         #print()
         print("(1) View Passwords")
         print("(2) Store new Passwords")
-        print("(3) Generate a new Storage key")
+        print("(3) Generate a new Storage auth")
         print("(4) Delete Entries")
         print("(5) Return to Main Menu")
         print("(6) Quit")
@@ -293,7 +306,7 @@ while vault_main and menu_state == 5:
 
         if vault_choice == 1:
             clear()
-            decode()
+            b64_decode()
             try:
                 pin_check = int(input("Enter your pin: > "))
             except:
@@ -303,21 +316,22 @@ while vault_main and menu_state == 5:
                 break
             if pin_check == int(secretKey):
                 clear()
-                print(vault_list)
+                with open("vault.csv", 'r') as view:
+                    print(view.read())
                 input("\nPress any key to return to main menu..")
             else:
                 print("Pin does not match set pin!")
 
         else:
-            "No valid key file found! Please generate one, or generate a new one"
+            "No valid authentication file found! Please generate one, or generate a new one"
 
 
         if vault_choice == 2:
             clear()
-            vault_encoder()
+            add_pass_enc()
             input("\nPassword successfully stored\n Press Enter to return to vault menu")
             break
 
 
         if vault_choice == 3:
-            gen_key()
+            manifest()
