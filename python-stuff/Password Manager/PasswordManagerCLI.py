@@ -1,13 +1,12 @@
 ## NoFrillsPasswordManager - Non-GUI Based, Alex Arias 10.27.2022
-import random
-import os
-import base64
+
 import requests
 import urllib.request
 import time
-from cryptography.fernet import Fernet
+import vault
+from vault import *
 
-currentVersion = '0.7.4'
+currentVersion = '0.7.9'
 
 def getupdate():
     URL = urllib.request.urlopen('https://raw.githubusercontent.com/obeywasabi/python-testing-grounds/main/python-stuff/Password%20Manager/version.txt')
@@ -23,7 +22,7 @@ def getupdate():
         if choice == 1:
             print("Downloading new version now!")
             newVersion = requests.get("https://github.com/obeywasabi/python-testing-grounds/raw/main/python-stuff/Password%20Manager/PasswordManagerCLI.exe")
-            with open("PasswordManagerCLI.exe", "wb") as f:
+            with open(str(data) + ".exe", "wb") as f:
                 f.write(newVersion.content)
                 f.close()
                 print("New version downloaded, shutting in 3 seconds!")
@@ -41,64 +40,6 @@ def getupdate():
 print("NoFrillsPasswordManager (non-GUI) by Alex A")
 print()
 input("Press any key to continue")
-
-
-def clear():
-   os.system("cls")
-   #os.system("clear")
-
-def gen():
-    shuffle = [name, fav_number, color, phrase]
-    random.shuffle(shuffle)
-    result = ''.join(str(item) for item in shuffle)
-    print("Your new password is" + result +"$")
-
-def gen_key():
-    keygen = input("Enter a 4-digit pin number to associate with your key file")
-    user_key = open("key.ini", "wb")
-    encoded = base64.b64encode(keygen.encode("utf-8"))
-    user_key.write(encoded)
-    logins.append(encoded)
-    user_key.close()
-    input("Key file successfully generated, Press enter to return to main menu")
-    clear()
-
-def vault_encoder():
-    #clear()
-    logins = []
-    service = input("First, add what service this password will belong to: ")
-    logins.append(service)
-    passwd = input("Now type in the password you'd like to save: ")
-    logins.append(passwd)
-    result = ''.join(map(str,logins))
-    encode = base64.b64encode(result)
-    print(encode)
-    input()
-    #with open('vault.json', 'w') as f:
-        #json.dump(encode, f, sort_keys=True)
-        #f.close()
-        #print("Password successfully saved")
-    #get_vault_list = open("vault.ini", "wb")
-    #user_input_service = input("First, add what service this password will belong to: ")
-    #encoder = base64.b64encode(user_input_service.encode("utf-8"))
-    #get_vault_list.write(encoder)
-    #get_vault_list.close()
-    #get_vault_list = open("vault.ini", "w")
-    #user_input_password = input("Now type in the password you'd like to save: ")
-    #pass_encoder = base64.b64encode(user_input_password.encode("utf-8"))
-    #get_vault_list.write("\n")
-    #get_vault_list.write((str([pass_encoder])))
-    #get_vault_list.close()
-    print("Stop here")
-    input()
-def decode():
-   with open("key.ini", "r") as f:
-       result = f.readline()
-       decoded = base64.b64decode(result).decode("utf-8")
-       global secretKey
-       secretKey = decoded
-       f.close()
-       clear()
 
 
 menu_prompts = [
@@ -126,7 +67,7 @@ newpass_prompts = [
 
 ## MAIN variables
 menu_choice = ""
-exist = os.path.exists("key.ini")
+exist = os.path.exists("stub.ini")
 mainmenu = False
 run = True
 menu_state = 0
@@ -140,13 +81,7 @@ did_shuffle = False
 #did_consent = False
 #did_key_run = 0
 
-#USER Variables
-name = ""
-fav_number = ""
-color = ""
-phrase = ""
-#username = ""
-#pin = ""
+
 
 # MAIN MENU OPTIONS
 while run:
@@ -195,10 +130,10 @@ while run:
     while newpassword and menu_state == 1:
         menu_choice = ""
         print(newpass_prompts[0])
-        name = input(newpass_prompts[1])
-        fav_number = input(newpass_prompts[2])
-        color = input("Type your favorite color(s) ")
-        phrase = input("Type a phrase you'd like to be included in your password ")
+        vault.name = input(newpass_prompts[1])
+        vault.fav_number = input(newpass_prompts[2])
+        vault.color = input("Type your favorite color(s) ")
+        vault.phrase = input("Type a phrase you'd like to be included in your password ")
         print("Generating....")
         print()
         gen()
@@ -293,7 +228,7 @@ while vault_main and menu_state == 5:
 
         if vault_choice == 1:
             clear()
-            decode()
+            b64_decode()
             try:
                 pin_check = int(input("Enter your pin: > "))
             except:
@@ -301,23 +236,27 @@ while vault_main and menu_state == 5:
                 input("Press enter to continue...")
                 clear()
                 break
-            if pin_check == int(secretKey):
+            if pin_check == int(vault.secretKey):
                 clear()
-                print(vault_list)
+                decrypt()
+                print()
                 input("\nPress any key to return to main menu..")
+                break
             else:
                 print("Pin does not match set pin!")
-
-        else:
-            "No valid key file found! Please generate one, or generate a new one"
+                clear()
+                break
 
 
         if vault_choice == 2:
             clear()
-            vault_encoder()
+            vault_add_Pass()
             input("\nPassword successfully stored\n Press Enter to return to vault menu")
             break
 
 
         if vault_choice == 3:
+            os.remove('manifest.env')
+            os.remove('vault.key')
+            os.remove('stub.ini')
             gen_key()
