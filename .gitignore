@@ -11,3 +11,6 @@ python-stuff/Password Manager/build/PasswordManagerNonGUI/PasswordManagerNonGUI.
 python-stuff/Password Manager/build/PasswordManagerNonGUI/PasswordManagerNonGUI.exe.manifest
 python-stuff/Password Manager/build/PasswordManagerNonGUI/PasswordManagerNonGUI.exe.manifest
 python-stuff/Password Manager/build/PasswordManagerNonGUI/PasswordManagerNonGUI.pkg
+python-stuff/Password Manager/auth.ini
+python-stuff/Password Manager/enc.key
+python-stuff/Password Manager/vault.csv
