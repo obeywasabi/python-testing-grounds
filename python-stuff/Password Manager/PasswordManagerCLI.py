@@ -1,13 +1,12 @@
 ## NoFrillsPasswordManager - Non-GUI Based, Alex Arias 10.27.2022
-import random
-import os
-import base64
+
 import requests
 import urllib.request
 import time
-from cryptography.fernet import Fernet
+import vault
+from vault import *
 
-currentVersion = '0.7.4'
+currentVersion = '0.7.9'
 
 def getupdate():
     URL = urllib.request.urlopen('https://raw.githubusercontent.com/obeywasabi/python-testing-grounds/main/python-stuff/Password%20Manager/version.txt')
@@ -23,7 +22,7 @@ def getupdate():
         if choice == 1:
             print("Downloading new version now!")
             newVersion = requests.get("https://github.com/obeywasabi/python-testing-grounds/raw/main/python-stuff/Password%20Manager/PasswordManagerCLI.exe")
-            with open("PasswordManagerCLI.exe", "wb") as f:
+            with open(str(data) + ".exe", "wb") as f:
                 f.write(newVersion.content)
                 f.close()
                 print("New version downloaded, shutting in 3 seconds!")
@@ -40,80 +39,7 @@ def getupdate():
 
 print("NoFrillsPasswordManager (non-GUI) by Alex A")
 print()
-input("Press any auth to continue")
-
-
-def clear():
-   #os.system("cls")
-   os.system("clear")
-
-
-def shuffle_pass():
-    shuffle = [name, fav_number, color, phrase]
-    random.shuffle(shuffle)
-    result = ''.join(str(item) for item in shuffle)
-    print("Your new password is" + result +"$")
-
-
-def manifest():
-    keygen = input("Enter a 4-digit pin number to associate with your auth file")
-    user_key = open("auth.ini", "wb")
-    encoded = base64.b64encode(keygen.encode("utf-8"))
-    user_key.write(encoded)
-    user_key.close()
-    gen_vault_key()
-    #encrypt_vault_file()
-    input("Key file successfully generated, Press enter to return to main menu")
-    clear()
-
-## VAULT FUNCTIONS
-
-def gen_vault_key():
-    gen_key = Fernet.generate_key()
-    with open("enc.key", "wb") as enc:
-        enc.write(gen_key)
-
-
-def load_vault_key():
-    return open("enc.key", 'rb').read()
-
-
-def encrypt_vault_file():
-    with open("enc.key", 'rb') as enc:
-        key = enc.read()
-        fernet = Fernet(key)
-    with open("vault.csv", 'rb') as file:
-        original = file.read()
-        encrypted = fernet.encrypt(original)
-    with open("vault.csv", 'wb') as encrypted_vault:
-        encrypted_vault.write(encrypted)
-
-
-def decrypt_vault_file():
-    fernet = Fernet(key)
-    with open("vault.csv", 'rb') as enc_file:
-        encrypted = enc_file.read()
-        decrypted = fernet.decrypt(encrypted)
-        with open("vault.csv", 'wb') as dec_file:
-            dec_file.write(decrypted)
-
-#def view_dec_vault():
-
-
-
-
-
-#def add_pass_enc():
-
-
-def b64_decode():
-   with open("auth.ini", "r") as f:
-       result = f.readline()
-       decoded = base64.b64decode(result).decode("utf-8")
-       global secretKey
-       secretKey = decoded
-       f.close()
-       clear()
+input("Press any key to continue")
 
 
 menu_prompts = [
@@ -141,13 +67,12 @@ newpass_prompts = [
 
 ## MAIN variables
 menu_choice = ""
-exist = os.path.exists("auth.ini")
+exist = os.path.exists("stub.ini")
 mainmenu = False
 run = True
 menu_state = 0
 newpassword = False
-auth = False
-key = Fernet.generate_key()
+key = False
 vault_main = False
 did_shuffle = False
 
@@ -156,13 +81,7 @@ did_shuffle = False
 #did_consent = False
 #did_key_run = 0
 
-#USER Variables
-name = ""
-fav_number = ""
-color = ""
-phrase = ""
-#username = ""
-#pin = ""
+
 
 # MAIN MENU OPTIONS
 while run:
@@ -211,13 +130,13 @@ while run:
     while newpassword and menu_state == 1:
         menu_choice = ""
         print(newpass_prompts[0])
-        name = input(newpass_prompts[1])
-        fav_number = input(newpass_prompts[2])
-        color = input("Type your favorite color(s) ")
-        phrase = input("Type a phrase you'd like to be included in your password ")
+        vault.name = input(newpass_prompts[1])
+        vault.fav_number = input(newpass_prompts[2])
+        vault.color = input("Type your favorite color(s) ")
+        vault.phrase = input("Type a phrase you'd like to be included in your password ")
         print("Generating....")
         print()
-        shuffle_pass()
+        gen()
         print()
         try:
             menu_choice = int(input(choice_prompts[0]))
@@ -242,11 +161,11 @@ while run:
             mainmenu = True
 
 
-# WHILE SHUFFLING AGAIN
+# WHILE RE-ROLLING
     while did_shuffle and menu_state == 2:
         clear()
         print("Shuffling....")
-        shuffle_pass()
+        gen()
         choice_sub = ""
 
         try:
@@ -260,7 +179,7 @@ while run:
         if choice_sub == 1:
             clear()
             newpassword = False
-            shuffle_pass()
+            gen()
 
         elif choice_sub == 2:
             clear()
@@ -275,29 +194,32 @@ while run:
 
 did_gen_key = exist
 
+vault_list = ["content one", "comedy123",
+              "content 2", "shalissabrown"]
+
 
 ## Main Vault menu
 
 while vault_main and menu_state == 5:
 
     if did_gen_key:
-        auth = True
+        key = True
 
     else:
         clear()
-        print("You do not have a auth file, to access the vault, please create one.")
+        print("You do not have a key file, to access the vault, please create one.")
         input("Press enter to create one")
         did_gen_key = True
         clear()
-        manifest()
+        gen_key()
 
-    while auth:
+    while key:
         clear()
         print("Welcome to Your Vault")
         #print()
         print("(1) View Passwords")
         print("(2) Store new Passwords")
-        print("(3) Generate a new Storage auth")
+        print("(3) Generate a new Storage key")
         print("(4) Delete Entries")
         print("(5) Return to Main Menu")
         print("(6) Quit")
@@ -314,24 +236,27 @@ while vault_main and menu_state == 5:
                 input("Press enter to continue...")
                 clear()
                 break
-            if pin_check == int(secretKey):
+            if pin_check == int(vault.secretKey):
                 clear()
-                with open("vault.csv", 'r') as view:
-                    print(view.read())
+                decrypt()
+                print()
                 input("\nPress any key to return to main menu..")
+                break
             else:
                 print("Pin does not match set pin!")
-
-        else:
-            "No valid authentication file found! Please generate one, or generate a new one"
+                clear()
+                break
 
 
         if vault_choice == 2:
             clear()
-            add_pass_enc()
+            vault_add_Pass()
             input("\nPassword successfully stored\n Press Enter to return to vault menu")
             break
 
 
         if vault_choice == 3:
-            manifest()
+            os.remove('manifest.env')
+            os.remove('vault.key')
+            os.remove('stub.ini')
+            gen_key()
