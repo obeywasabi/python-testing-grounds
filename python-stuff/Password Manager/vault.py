@@ -65,8 +65,8 @@ def decrypt():
 def vault_add_Pass():
     clear()
 
-    service = input("First, add what service this password will belong to: ")
-    passwd = input("Now type in the password you'd like to save: ")
+    service = input("First, add what service this password will belong to: > ")
+    passwd = input("Now type in the password you'd like to save: > ")
 
     with open('vault.key', 'rb') as file:
         key = file.read()
@@ -109,11 +109,12 @@ def gen():
 
 
 def gen_key():
-    keygen = input("Enter a 4-digit pin number or password to associate with your key file")
+    keygen = input("Enter a 4-digit pin number or password to associate with your key file: > ")
     user_key = open("stub.ini", "wb")
     encoded = base64.b64encode(keygen.encode("utf-8"))
     user_key.write(encoded)
     user_key.close()
+
     gen_enc_key()
     read_and_encrypt()
     input("Key file successfully generated, Press enter to return to main menu")

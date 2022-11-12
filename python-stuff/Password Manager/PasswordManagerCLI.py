@@ -8,7 +8,7 @@ from vault import *
 
 currentVersion = '0.7.9'
 
-def getupdate():
+def get_update():
     URL = urllib.request.urlopen('https://raw.githubusercontent.com/obeywasabi/python-testing-grounds/main/python-stuff/Password%20Manager/version.txt')
     data = URL.read().decode('utf-8')
 
@@ -20,13 +20,10 @@ def getupdate():
         print("App is not up to date! You are on version " + currentVersion + " but you could be on version " + data + "!")
         choice = int(input("Do you want to update now? Press 1 for Yes and 2 for No: > "))
         if choice == 1:
-            print("Downloading new version now!")
+            print("Downloading new version now, program will quit on its own, please delete OLD executable.")
             newVersion = requests.get("https://github.com/obeywasabi/python-testing-grounds/raw/main/python-stuff/Password%20Manager/PasswordManagerCLI.exe")
-            with open(str(data) + ".exe", "wb") as f:
-                f.write(newVersion.content)
-                f.close()
-                print("New version downloaded, shutting in 3 seconds!")
-                time.sleep(3)
+            with open(str(data) + ".exe", "wb") as push:
+                push.write(newVersion.content)
                 quit()
 
         if choice == 2:
@@ -44,28 +41,30 @@ input("Press any key to continue")
 
 menu_prompts = [
     "What would you like to do?\n",
-    "(1) Create new password",
-    "(2) Store password to Vault",
-    "(3) Access password Vault",
-    "(4) Check for updates",
-    "(5) Quit"
+    "(1) Generate a new password",
+    "(2) Enter Vault",
+    "(3) Check for updates",
+    "(4) Quit"
 ]
 
 choice_prompts = [
-    "Press 1 to return to main menu, or press 2 and press Enter to shuffle generated password > ",
-    "Press 1 to shuffle again, or press 2 and press Enter to return to main menu > ",
+    "Press 1 to return to main menu, or press 2 and press Enter to shuffle generated password: > ",
+    "Press 1 to shuffle again, or press 2 and press Enter to return to main menu: > ",
 
 ]
 
 newpass_prompts = [
-    "USAGE: \nFill in these quick questions to generate a new password, realistically you can input anything "
-    "into the lines, and the generator will still generate and shuffle all of your inputs.\n",
-    "What is your name? > ",
-    "Type a favorite or rememberable number > ",
+    "USAGE: \nFill in a few questions to generate a new password, realistically you can input anything "
+    "into the lines, and the generator will still generate and shuffle all of your inputs. You can also choose to leave"
+    "any of the sections blank to generate a shorter or longer password.\n",
+    "What is your name?: > ",
+    "Type a favorite or rememberable number: > ",
+    "Enter a favorite color(s) or any desired input: > ",
+    "Enter a phrase or word you want to be included in the password: > "
 
 ]
 
-## MAIN variables
+## MAIN Vars
 menu_choice = ""
 exist = os.path.exists("stub.ini")
 mainmenu = False
@@ -76,14 +75,8 @@ key = False
 vault_main = False
 did_shuffle = False
 
-## Vault Main variables
 
-#did_consent = False
-#did_key_run = 0
-
-
-
-# MAIN MENU OPTIONS
+# WHILE MAIN MENU & OPTIONS
 while run:
     clear()
     mainmenu = True
@@ -93,7 +86,6 @@ while run:
         print(menu_prompts[2])
         print(menu_prompts[3])
         print(menu_prompts[4])
-        print(menu_prompts[5])
 
         try:
             menu_choice = int(input("\n> "))
@@ -115,25 +107,26 @@ while run:
             mainmenu = False
             run = False
 
-        elif menu_choice == 4:
-            getupdate()
 
-        elif menu_choice == 5:
+        elif menu_choice == 3:
+            get_update()
+
+        elif menu_choice == 4:
                 quit()
 
-        if menu_choice > 5:
+        if menu_choice > 4:
             print("Not a valid choice! Press enter to continue")
             input()
             clear()
 
-# NEW PASSWORD STATE
+# IF NEW PASSWORD, AND GENERATE
     while newpassword and menu_state == 1:
         menu_choice = ""
         print(newpass_prompts[0])
         vault.name = input(newpass_prompts[1])
         vault.fav_number = input(newpass_prompts[2])
-        vault.color = input("Type your favorite color(s) ")
-        vault.phrase = input("Type a phrase you'd like to be included in your password ")
+        vault.color = input(newpass_prompts[3])
+        vault.phrase = input(newpass_prompts[4])
         print("Generating....")
         print()
         gen()
@@ -161,7 +154,7 @@ while run:
             mainmenu = True
 
 
-# WHILE RE-ROLLING
+#IF DID SHUFFLE PASSWORD STATE
     while did_shuffle and menu_state == 2:
         clear()
         print("Shuffling....")
@@ -194,11 +187,7 @@ while run:
 
 did_gen_key = exist
 
-vault_list = ["content one", "comedy123",
-              "content 2", "shalissabrown"]
-
-
-## Main Vault menu
+## VAULT MAIN MENU AND KEY CHECK
 
 while vault_main and menu_state == 5:
 
@@ -207,7 +196,7 @@ while vault_main and menu_state == 5:
 
     else:
         clear()
-        print("You do not have a key file, to access the vault, please create one.")
+        print("You do not have a key file, to access the vault securely, please create one.")
         input("Press enter to create one")
         did_gen_key = True
         clear()
@@ -216,7 +205,7 @@ while vault_main and menu_state == 5:
     while key:
         clear()
         print("Welcome to Your Vault")
-        #print()
+
         print("(1) View Passwords")
         print("(2) Store new Passwords")
         print("(3) Generate a new Storage key")
@@ -224,16 +213,21 @@ while vault_main and menu_state == 5:
         print("(5) Return to Main Menu")
         print("(6) Quit")
         print()
-        vault_choice = int(input("> "))
+
+        try:
+            vault_choice = int(input("Enter a choice: > "))
+
+        except ValueError:
+            input("Invalid choice! Press enter to continue")
+            break
 
         if vault_choice == 1:
             clear()
             b64_decode()
             try:
                 pin_check = int(input("Enter your pin: > "))
-            except:
-                print("Please enter a valid option")
-                input("Press enter to continue...")
+            except ValueError:
+                input("Invalid option! Press enter to continue...")
                 clear()
                 break
             if pin_check == int(vault.secretKey):
@@ -243,7 +237,7 @@ while vault_main and menu_state == 5:
                 input("\nPress any key to return to main menu..")
                 break
             else:
-                print("Pin does not match set pin!")
+                print("Pin does not match the set pin!")
                 clear()
                 break
 
@@ -260,3 +254,6 @@ while vault_main and menu_state == 5:
             os.remove('vault.key')
             os.remove('stub.ini')
             gen_key()
+
+        if vault_choice == 6:
+            quit()
