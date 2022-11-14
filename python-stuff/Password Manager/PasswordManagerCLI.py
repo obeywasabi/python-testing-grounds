@@ -5,7 +5,7 @@ import urllib.request
 import vault
 from vault import *
 
-currentVersion = '0.8.5'
+currentVersion = '0.8.8'
 
 def get_update():
     URL = urllib.request.urlopen('https://raw.githubusercontent.com/obeywasabi/python-testing-grounds/main/python-stuff/Password%20Manager/version.txt')
@@ -63,65 +63,62 @@ newpass_prompts = [
 
 ]
 
-## MAIN Vars
+## Runtime Vars
 menu_choice = ""
 exist = os.path.exists("stub.ini")
 does_manifest_exist = os.path.exists('manifest.env')
-mainmenu = False
-run = True
-menu_state = 0
-newpassword = False
+does_stub_exist = exist ## Returns boolean value
+main = True
 key = False
-vault_main = False
-did_shuffle = False
+menu_stage = 0
 
+                                ## menu stages
+                                # 0 = main menu
+                                # 1 = newpassword stage
+                                # 2 = shuffle stage
+                                # 3 = UNASSIGNED
+                                # 4 = UNASSIGNED
+                                # 5 = vault stage
 
-# WHILE MAIN MENU & OPTIONS
-while run:
+##--MAIN MENU STAGE--##
+while main:
     clear()
-    mainmenu = True
-    while mainmenu and menu_state == 0:
-        print(menu_prompts[0])
-        print(menu_prompts[1])
-        print(menu_prompts[2])
-        print(menu_prompts[3])
-        print(menu_prompts[4])
 
-        try:
-            menu_choice = int(input("\n> "))
-        except ValueError:
-            print("Invalid Option!")
-            input("Press enter to continue")
-            break
+    print(menu_prompts[0])
+    print(menu_prompts[1])
+    print(menu_prompts[2])
+    print(menu_prompts[3])
+    print(menu_prompts[4])
 
-        if menu_choice == 1:
-            newpassword = True
-            mainmenu = False
-            menu_state = menu_state + 1
-            clear()
+    try:
+        menu_choice = int(input("\n> "))
+    except ValueError:
+        print("Invalid Option!")
+        input("Press enter to continue")
+        break
 
-        elif menu_choice == 2:
-            clear()
-            vault_main = True
-            menu_state = menu_state + 5
-            mainmenu = False
-            run = False
+    if menu_choice == 1:
+        menu_stage = menu_stage + 1
+        clear()
+
+    elif menu_choice == 2:
+        clear()
+        menu_stage = menu_stage + 5
 
 
-        elif menu_choice == 3:
-            get_update()
+    elif menu_choice == 3:
+        get_update()
 
-        elif menu_choice == 4:
-                quit()
+    elif menu_choice == 4:
+            quit()
 
-        if menu_choice > 4:
-            print("Not a valid choice! Press enter to continue")
-            input()
-            clear()
+    if menu_choice > 4:
+        print("Not a valid choice! Press enter to continue")
+        input()
+        clear()
 
 # IF NEW PASSWORD, AND GENERATE
-    while newpassword and menu_state == 1:
-        menu_choice = ""
+    while menu_stage == 1:
         print(newpass_prompts[0])
         vault.name = input(newpass_prompts[1])
         vault.fav_number = input(newpass_prompts[2])
@@ -139,136 +136,127 @@ while run:
 
 
         if menu_choice == 1:
-            menu_state = menu_state - 1
-            mainmenu = True
-            newpassword = False
+            menu_stage = menu_stage - 1
+            break
 
-        elif menu_choice == 2:
-            newpassword = False
-            did_shuffle = True
-            menu_state = menu_state + 1
+        if menu_choice == 2:
+            menu_stage = menu_stage + 1
+            break
 
-        else:
-            newpassword = False
-            menu_state = menu_state - 1
-            mainmenu = True
+        if menu_choice > 2 or menu_choice < 1:
+            input("Invalid Choice! Press enter to return to main menu")
+            menu_stage = menu_stage - 1
+            break
 
 
-#IF DID SHUFFLE PASSWORD STATE
-    while did_shuffle and menu_state == 2:
+##---SHUFFLE STAGE---##
+    while menu_stage == 2:
         clear()
         print("Shuffling....")
         gen()
-        choice_sub = ""
+        shuffle_sub = int()
 
         try:
-            choice_sub = int(input(choice_prompts[1]))
+            shuffle_sub = int(input(choice_prompts[1]))
         except ValueError:
             print("Not a valid option, press enter to re-roll")
             input()
             clear()
-            break
 
-        if choice_sub == 1:
+        if shuffle_sub == 1:
             clear()
-            newpassword = False
             gen()
 
-        elif choice_sub == 2:
+        if shuffle_sub == 2:
             clear()
-            mainmenu = True
-            menu_state = menu_state - 2
-            did_shuffle = False
+            menu_stage = menu_stage - 2
 
-        else:
+        if shuffle_sub > 2 or shuffle_sub < 1:
             print("Invalid option!")
             input("Press enter to shuffle again")
             clear()
 
-does_stub_exist = exist
 
-## VAULT MAIN MENU AND KEY CHECK
+##---VAULT MAIN MENU AND KEY CHECK---#
 
-while vault_main and menu_state == 5:
+    while menu_stage == 5:
 
-    if does_stub_exist:
-        key = True
-
-    else:
-        clear()
-        print("You do not have a key file, to access the vault securely, please create one.")
-        input("Press enter to create one")
-        did_gen_key = True
-        clear()
-        gen_key()
-
-    while key:
-        clear()
-        print("Welcome to Your Vault")
-
-        print("(1) View Passwords")
-        print("(2) Store new Passwords")
-        print("(3) Generate a new Storage key")
-        print("(4) Delete Entries")
-        print("(5) Return to Main Menu")
-        print("(6) Quit")
-        print()
-
-        try:
-            vault_choice = int(input("Enter a choice: > "))
-
-        except ValueError:
-            input("Invalid choice! Press enter to continue")
-            break
-
-        if vault_choice == 1:
-            clear()
-            b64_decode()
-            try:
-                pin_check = int(input("Enter your pin: > "))
-            except ValueError:
-                input("Invalid option! Press enter to continue...")
-                clear()
-
-            if pin_check == int(vault.secretKey):
-                clear()
-                decrypt()
-                print()
-                input("\nPress any key to return to main menu..")
-
-            else:
-                print("Pin does not match the set pin!")
-                clear()
-
-        elif vault_choice == 2:
-            clear()
-            vault_add_Pass()
-            input("\nPassword successfully stored\n Press Enter to return to vault menu")
-
-
-        elif vault_choice == 3:
-            os.remove('manifest.env')
-            os.remove('vault.key')
-            os.remove('stub.ini')
-            gen_key()
-
-
-        elif vault_choice == 4:
-            turnicate_entry()
-
-
-        elif vault_choice == 5:
-            clear()
-            key = False
-            vault_main = False
-            menu_state = 0
-            run = True
-            mainmenu = True
-
-
-        elif vault_choice == 6:
-            quit()
+        if does_stub_exist:
+            key = True
 
         else:
-            input("Not a valid option, press any key to return to main menu")
-            break
+            clear()
+            print("You do not have a key file, to access the vault securely, please create one.")
+            input("Press enter to create one")
+            did_gen_key = True
+            clear()
+            gen_key()
+
+        while key:
+            clear()
+            print("Welcome to Your Vault")
+
+            print("(1) View Passwords")
+            print("(2) Store new Passwords")
+            print("(3) Generate a new Storage key")
+            print("(4) Delete Entries")
+            print("(5) Return to Main Menu")
+            print("(6) Quit")
+            print()
+
+            try:
+                vault_choice = int(input("Enter a choice: > "))
+
+            except ValueError:
+                input("Invalid choice! Press enter to continue")
+                break
+
+            if vault_choice == 1:
+                clear()
+                b64_decode()
+                try:
+                    pin_check = int(input("Enter your pin: > "))
+                except ValueError:
+                    input("Invalid option! Press enter to continue...")
+                    clear()
+                    break
+
+                if pin_check == int(vault.secretKey):
+                    clear()
+                    decrypt()
+                    print()
+                    input("\nPress any key to return to main menu..")
+
+                else:
+                    input("Pin does not match the set pin! Press enter to continue")
+                    clear()
+
+            elif vault_choice == 2:
+                clear()
+                vault_add_Pass()
+                input("\nPassword successfully stored\n Press Enter to return to vault menu")
+
+
+            elif vault_choice == 3:
+                os.remove('manifest.env')
+                os.remove('vault.key')
+                os.remove('stub.ini')
+                gen_key()
+
+
+            elif vault_choice == 4:
+                turnicate_entry()
+
+
+            elif vault_choice == 5:
+                clear()
+                key = False
+                menu_stage = menu_stage - 5
+                break
+
+
+            elif vault_choice == 6:
+                quit()
+
+            else:
+                input("Not a valid option, press any key to return to main menu")

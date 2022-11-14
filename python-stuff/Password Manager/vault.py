@@ -96,7 +96,6 @@ def vault_add_Pass():
 def turnicate_entry():
 
     service_name = input("To remove a password entry, type in the service name: > ").upper()
-    print(service_name)
     with open('vault.key', 'rb') as file:
         key = file.read()
 
@@ -124,11 +123,10 @@ def turnicate_entry():
 
     ## Opens as read & write, resets cursor, rewrites everything to file except
     ## specified service
-
+    input("Password successfully removed, press enter to return to main menu")
     read_and_encrypt()
 
     ## Re-encrypts file
-
 
 
 
