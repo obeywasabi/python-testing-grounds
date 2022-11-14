@@ -2,11 +2,10 @@
 
 import requests
 import urllib.request
-import time
 import vault
 from vault import *
 
-currentVersion = '0.7.9'
+currentVersion = '0.8.5'
 
 def get_update():
     URL = urllib.request.urlopen('https://raw.githubusercontent.com/obeywasabi/python-testing-grounds/main/python-stuff/Password%20Manager/version.txt')
@@ -22,7 +21,7 @@ def get_update():
         if choice == 1:
             print("Downloading new version now, program will quit on its own, please delete OLD executable.")
             newVersion = requests.get("https://github.com/obeywasabi/python-testing-grounds/raw/main/python-stuff/Password%20Manager/PasswordManagerCLI.exe")
-            with open(str(data) + ".exe", "wb") as push:
+            with open("PasswordManager"+ data + ".exe", "wb") as push:
                 push.write(newVersion.content)
                 quit()
 
@@ -67,6 +66,7 @@ newpass_prompts = [
 ## MAIN Vars
 menu_choice = ""
 exist = os.path.exists("stub.ini")
+does_manifest_exist = os.path.exists('manifest.env')
 mainmenu = False
 run = True
 menu_state = 0
@@ -185,13 +185,13 @@ while run:
             input("Press enter to shuffle again")
             clear()
 
-did_gen_key = exist
+does_stub_exist = exist
 
 ## VAULT MAIN MENU AND KEY CHECK
 
 while vault_main and menu_state == 5:
 
-    if did_gen_key:
+    if does_stub_exist:
         key = True
 
     else:
@@ -229,31 +229,46 @@ while vault_main and menu_state == 5:
             except ValueError:
                 input("Invalid option! Press enter to continue...")
                 clear()
-                break
+
             if pin_check == int(vault.secretKey):
                 clear()
                 decrypt()
                 print()
                 input("\nPress any key to return to main menu..")
-                break
+
             else:
                 print("Pin does not match the set pin!")
                 clear()
-                break
 
-
-        if vault_choice == 2:
+        elif vault_choice == 2:
             clear()
             vault_add_Pass()
             input("\nPassword successfully stored\n Press Enter to return to vault menu")
-            break
 
 
-        if vault_choice == 3:
+        elif vault_choice == 3:
             os.remove('manifest.env')
             os.remove('vault.key')
             os.remove('stub.ini')
             gen_key()
 
-        if vault_choice == 6:
+
+        elif vault_choice == 4:
+            turnicate_entry()
+
+
+        elif vault_choice == 5:
+            clear()
+            key = False
+            vault_main = False
+            menu_state = 0
+            run = True
+            mainmenu = True
+
+
+        elif vault_choice == 6:
             quit()
+
+        else:
+            input("Not a valid option, press any key to return to main menu")
+            break

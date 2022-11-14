@@ -4,6 +4,7 @@
 from cryptography.fernet import Fernet
 import random
 import base64
+import subprocess
 import os
 
 
@@ -91,6 +92,47 @@ def vault_add_Pass():
     ## We append and add a new line to the list and then re-encrypt
     read_and_encrypt()
 
+
+def turnicate_entry():
+
+    service_name = input("To remove a password entry, type in the service name: > ").upper()
+    print(service_name)
+    with open('vault.key', 'rb') as file:
+        key = file.read()
+
+    fernet = Fernet(key)
+
+    with open('manifest.env', 'rb') as enc_file:
+        encrypted = enc_file.read()
+
+    ## Above opens key file, reads encrypted manifest, if valid then decrypts it
+
+    decrypted = fernet.decrypt(encrypted)
+
+    with open('manifest.env', 'wb') as dec_file:
+        dec_file.write(decrypted)
+
+    ## The file is now decrypted and ready for deletion
+
+    with open('manifest.env', 'r+') as turn:
+        e = turn.readlines()
+        turn.seek(0)
+        for line in e:
+            if service_name not in line:
+                turn.write(line)
+        turn.truncate()
+
+    ## Opens as read & write, resets cursor, rewrites everything to file except
+    ## specified service
+
+    read_and_encrypt()
+
+    ## Re-encrypts file
+
+
+
+
+
 def b64_decode():
    with open("stub.ini", "r") as f:
        result = f.readline()
@@ -114,7 +156,8 @@ def gen_key():
     encoded = base64.b64encode(keygen.encode("utf-8"))
     user_key.write(encoded)
     user_key.close()
-
+    with open('manifest.env', 'w') as f:
+        f.write("")
     gen_enc_key()
     read_and_encrypt()
     input("Key file successfully generated, Press enter to return to main menu")
