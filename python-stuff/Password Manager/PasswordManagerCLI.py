@@ -3,10 +3,14 @@
 import requests
 import urllib.request
 import vault
-import keyboard
+from rich.console import Console
+from rich.prompt import Confirm
+from rich.table import Table
+from rich.panel import Panel
 from vault import *
 
 currentVersion = '0.8.8'
+console = Console()
 
 def get_update():
     URL = urllib.request.urlopen('https://raw.githubusercontent.com/obeywasabi/python-testing-grounds/main/python-stuff/Password%20Manager/version.txt')
@@ -34,7 +38,8 @@ def get_update():
             print("Invalid option!")
             quit()
 
-print("NoFrillsPasswordManager (non-GUI) by Alex A")
+print(Panel.fit("Hello, [red]World!"))
+console.print("[red]NoFrillsPasswordManager (non-GUI)[/]:key: by Alex A", style="bold")
 print()
 input("Press any key to continue")
 
@@ -125,7 +130,7 @@ while main:
         vault.fav_number = input(newpass_prompts[2])
         vault.color = input(newpass_prompts[3])
         vault.phrase = input(newpass_prompts[4])
-        print("Generating....")
+        print("Generating...")
         print()
         gen()
         print()
