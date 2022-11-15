@@ -4,7 +4,7 @@
 from cryptography.fernet import Fernet
 import random
 import base64
-import subprocess
+import keyboard
 import os
 
 

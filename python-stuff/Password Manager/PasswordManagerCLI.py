@@ -3,6 +3,7 @@
 import requests
 import urllib.request
 import vault
+import keyboard
 from vault import *
 
 currentVersion = '0.8.8'
@@ -83,7 +84,7 @@ menu_stage = 0
 ##--MAIN MENU STAGE--##
 while main:
     clear()
-
+    menu_choice = int()
     print(menu_prompts[0])
     print(menu_prompts[1])
     print(menu_prompts[2])
@@ -95,7 +96,6 @@ while main:
     except ValueError:
         print("Invalid Option!")
         input("Press enter to continue")
-        break
 
     if menu_choice == 1:
         menu_stage = menu_stage + 1
@@ -110,14 +110,15 @@ while main:
         get_update()
 
     elif menu_choice == 4:
-            quit()
+        quit()
 
     if menu_choice > 4:
         print("Not a valid choice! Press enter to continue")
         input()
         clear()
+        continue
 
-# IF NEW PASSWORD, AND GENERATE
+    # IF NEW PASSWORD, AND GENERATE
     while menu_stage == 1:
         print(newpass_prompts[0])
         vault.name = input(newpass_prompts[1])
