@@ -3,9 +3,12 @@
 import requests
 import urllib.request
 import vault
+import time
 from rich.console import Console
+from rich import print
 from rich.prompt import Confirm
 from rich.table import Table
+from rich.layout import Layout
 from rich.panel import Panel
 from vault import *
 
@@ -17,7 +20,7 @@ def get_update():
     data = URL.read().decode('utf-8')
 
     if (data == currentVersion):
-        print("Up to date!")
+        console.print("[green]Up to date![/] :checkmark: ")
         quit()
 
     else:
@@ -38,17 +41,17 @@ def get_update():
             print("Invalid option!")
             quit()
 
-print(Panel.fit("Hello, [red]World!"))
-console.print("[red]NoFrillsPasswordManager (non-GUI)[/]:key: by Alex A", style="bold")
+console.print("[red]NoFrillsPasswordManager (non-GUI)[/] :key: by Alex A", style="bold", justify="center")
 print()
-input("Press any key to continue")
+console.print("[r][b]Press enter to continue[/]", justify="center")
+input()
 
 
 menu_prompts = [
-    "What would you like to do?\n",
-    "(1) Generate a new password",
-    "(2) Enter Vault",
-    "(3) Check for updates",
+    "[b]Select an option[/]\n"
+    "\n(1) Generate a new password\n"
+    "(2) Enter Vault\n"
+    "(3) Check for updates\n"
     "(4) Quit"
 ]
 
@@ -90,14 +93,10 @@ menu_stage = 0
 while main:
     clear()
     menu_choice = int()
-    print(menu_prompts[0])
-    print(menu_prompts[1])
-    print(menu_prompts[2])
-    print(menu_prompts[3])
-    print(menu_prompts[4])
+    print(Panel(menu_prompts[0], title="Main Menu", subtitle="v1.0.0", padding=(2,25), highlight=True))
 
     try:
-        menu_choice = int(input("\n> "))
+        menu_choice = console.input("\n[red][b]Choice:[/] > ")
     except ValueError:
         print("Invalid Option!")
         input("Press enter to continue")
