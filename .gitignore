@@ -19,3 +19,5 @@ python-stuff/Password Manager/vault.key
 python-stuff/Password Manager/manifest.env
 python-stuff/Password Manager/manifest.env
 *.env
+*.env
+python-stuff/Password Manager/Rewrite.py
