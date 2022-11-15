@@ -21,3 +21,6 @@ python-stuff/Password Manager/manifest.env
 *.env
 *.env
 python-stuff/Password Manager/Rewrite.py
+*.env
+python-stuff/Password Manager/.DS_Store
+python-stuff/.DS_Store
