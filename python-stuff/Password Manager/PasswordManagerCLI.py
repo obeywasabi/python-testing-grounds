@@ -62,13 +62,13 @@ choice_prompts = [
 ]
 
 newpass_prompts = [
-    "USAGE: \nFill in a few questions to generate a new password, realistically you can input anything "
+    "[b][green]USAGE: \nFill in a few questions to generate a new password, realistically you can input anything "
     "into the lines, and the generator will still generate and shuffle all of your inputs. You can also choose to leave"
-    "any of the sections blank to generate a shorter or longer password.\n",
-    "What is your name?: > ",
-    "Type a favorite or rememberable number: > ",
-    "Enter a favorite color(s) or any desired input: > ",
-    "Enter a phrase or word you want to be included in the password: > "
+    " any of the sections blank to generate a shorter and or longer password.[/]\n",
+    "[b][yellow][r]What is your name?: >[/] ",
+    "[b][yellow][r]Type a favorite or rememberable number: >[/] ",
+    "[b][yellow][r]Enter a favorite color(s) or any desired input: >[/] ",
+    "[b][yellow][r]Enter a phrase or word you want to be included in the password: >[/] "
 
 ]
 
@@ -92,11 +92,12 @@ menu_stage = 0
 ##--MAIN MENU STAGE--##
 while main:
     clear()
+    print(Panel(menu_prompts[0], title="Main Menu", subtitle="v1.0.0", padding=(2, 25), highlight=True))
     menu_choice = int()
-    print(Panel(menu_prompts[0], title="Main Menu", subtitle="v1.0.0", padding=(2,25), highlight=True))
 
     try:
-        menu_choice = console.input("\n[red][b]Choice:[/] > ")
+        menu_choice = int(console.input("[b][yellow][r]Choice: >[/] "))
+
     except ValueError:
         print("Invalid Option!")
         input("Press enter to continue")
@@ -109,27 +110,26 @@ while main:
         clear()
         menu_stage = menu_stage + 5
 
-
     elif menu_choice == 3:
         get_update()
 
     elif menu_choice == 4:
         quit()
 
-    if menu_choice > 4:
+    else:
         print("Not a valid choice! Press enter to continue")
         input()
         clear()
-        continue
 
     # IF NEW PASSWORD, AND GENERATE
     while menu_stage == 1:
-        print(newpass_prompts[0])
-        vault.name = input(newpass_prompts[1])
-        vault.fav_number = input(newpass_prompts[2])
-        vault.color = input(newpass_prompts[3])
-        vault.phrase = input(newpass_prompts[4])
-        print("Generating...")
+        print(Panel.fit(newpass_prompts[0], title="Generate a new password", padding=(2, 25)))
+        vault.name = console.input(newpass_prompts[1])
+        vault.fav_number = console.input(newpass_prompts[2])
+        vault.color = console.input(newpass_prompts[3])
+        vault.phrase = console.input(newpass_prompts[4])
+        console.print("[b][green]Generating...[/]")
+        time.sleep(0.5)
         print()
         gen()
         print()

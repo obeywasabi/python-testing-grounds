@@ -4,8 +4,12 @@
 from cryptography.fernet import Fernet
 import random
 import base64
+from rich.console import Console
+from rich import print
 import os
 
+
+console = Console()
 
 #USER Variables
 name = ""
@@ -144,7 +148,7 @@ def gen():
     shuffle = [name, fav_number, color, phrase]
     random.shuffle(shuffle)
     result = ''.join(str(item) for item in shuffle)
-    print("Your new password is" + result +"$")
+    console.print("[b]Your new password is[/]" + result +"$")
 
 
 def gen_key():
