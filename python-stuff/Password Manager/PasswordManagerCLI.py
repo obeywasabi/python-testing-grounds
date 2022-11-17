@@ -5,6 +5,7 @@ import urllib.request
 import vault
 import time
 from rich.console import Console
+from rich.align import Align
 from rich import print
 from rich.prompt import Confirm
 from rich.table import Table
@@ -93,8 +94,9 @@ menu_stage = 0
 while main:
     clear()
     print(Panel(menu_prompts[0], title="Main Menu", subtitle="v1.0.0", padding=(2, 25), highlight=True))
-    menu_choice = int()
 
+    menu_choice = int()
+    
     try:
         menu_choice = int(console.input("[b][yellow][r]Choice: >[/] "))
 
@@ -123,7 +125,7 @@ while main:
 
     # IF NEW PASSWORD, AND GENERATE
     while menu_stage == 1:
-        print(Panel.fit(newpass_prompts[0], title="Generate a new password", padding=(2, 25)))
+        print(Panel.fit(newpass_prompts[0], title="Generate a new password", padding=(2, 1)))
         vault.name = console.input(newpass_prompts[1])
         vault.fav_number = console.input(newpass_prompts[2])
         vault.color = console.input(newpass_prompts[3])
