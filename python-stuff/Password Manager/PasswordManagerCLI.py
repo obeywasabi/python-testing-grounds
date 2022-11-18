@@ -13,7 +13,7 @@ from rich.layout import Layout
 from rich.panel import Panel
 from vault import *
 
-currentVersion = '0.8.8'
+currentVersion = '0.8.9'
 console = Console()
 
 def get_update():
@@ -195,14 +195,13 @@ while main:
             clear()
             print("You do not have a key file, to access the vault securely, please create one.")
             input("Press enter to create one")
-            did_gen_key = True
+            key = True
             clear()
             gen_key()
 
         while key:
             clear()
             print("Welcome to Your Vault")
-
             print("(1) View Passwords")
             print("(2) Store new Passwords")
             print("(3) Generate a new Storage key")

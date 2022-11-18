@@ -18,8 +18,8 @@ color = ""
 phrase = ""
 
 def clear():
-   os.system("cls")
-   #os.system("clear")
+   #os.system("cls")
+   os.system("clear")
 
 
 ## Generate Encrypted Key
@@ -133,7 +133,6 @@ def turnicate_entry():
 
 
 
-
 def b64_decode():
    with open("stub.ini", "r") as f:
        result = f.readline()
@@ -148,7 +147,7 @@ def gen():
     shuffle = [name, fav_number, color, phrase]
     random.shuffle(shuffle)
     result = ''.join(str(item) for item in shuffle)
-    console.print("[b]Your new password is[/]" + result +"$")
+    console.print("[b][blue]Your new password is:[/] " + result +"$")
 
 
 def gen_key():
