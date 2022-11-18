@@ -31,3 +31,4 @@ python-stuff/.DS_Store
 python-stuff/.DS_Store
 python-stuff/Password Manager/.DS_Store
 *.env
+python-stuff/Password Manager/manifest.env
