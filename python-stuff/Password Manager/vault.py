@@ -3,9 +3,14 @@
 
 from cryptography.fernet import Fernet
 import random
+import time
 import base64
 from rich.console import Console
+from rich.table import Table
+from rich.align import Align
 from rich import print
+from rich.panel import Panel
+from rich import box
 import os
 
 
@@ -39,12 +44,12 @@ def read_and_encrypt():
 
     f = Fernet(key)
 
-    with open('manifest.env', 'rb') as read:
+    with open('manifest.obey', 'rb') as read:
         data = read.read()
 
     encryptedData = f.encrypt(data)
 
-    with open('manifest.env', 'wb') as save:
+    with open('manifest.obey', 'wb') as save:
         save.write(encryptedData)
 
 
@@ -55,7 +60,7 @@ def decrypt():
         key = file.read()
     ## Open and read keyfile
 
-    with open('manifest.env', 'rb') as read:
+    with open('manifest.obey', 'rb') as read:
         encryptedData = read.read()
     ## Open and Read Encrypted data
     f = Fernet(key)
@@ -68,32 +73,37 @@ def decrypt():
 ## Add password to vault
 def vault_add_Pass():
     clear()
-
-    service = input("First, add what service this password will belong to: > ")
-    passwd = input("Now type in the password you'd like to save: > ")
-
+    print(Panel.fit("[b]Type the name of the service this password will belong to[/]", title="Service Name", padding=(2, 25)))
+    service = console.input("[b][yellow][r]Service Name:[/] > ")
+    if service == "":
+        input("You must provide a service name! Press enter to conitnue...")
+        vault_add_Pass()
+    clear()
+    print(Panel.fit("[b]Now type in the password you want stored. INFO HERE[/]", title="Password", padding=(2, 25)))
+    passwd = console.input("[b][yellow][r]Password:[/] > ")
     with open('vault.key', 'rb') as file:
         key = file.read()
 
     fernet = Fernet(key)
 
-    with open('manifest.env', 'rb') as enc_file:
+    with open('manifest.obey', 'rb') as enc_file:
         encrypted = enc_file.read()
 
     ## Above opens key file, reads encrypted manifest, if valid then decrypts it
 
     decrypted = fernet.decrypt(encrypted)
 
-    with open('manifest.env', 'wb') as dec_file:
+    with open('manifest.obey', 'wb') as dec_file:
         dec_file.write(decrypted)
 
     ## The file is now decrypted and ready for writing
 
-    with open('manifest.env', 'ab') as append_new:
+    with open('manifest.obey', 'ab') as append_new:
         append_new.write(f'\n{service.upper()} : {passwd}'.encode())
 
     ## We append and add a new line to the list and then re-encrypt
     read_and_encrypt()
+    clear()
 
 
 def turnicate_entry():
@@ -104,19 +114,19 @@ def turnicate_entry():
 
     fernet = Fernet(key)
 
-    with open('manifest.env', 'rb') as enc_file:
+    with open('manifest.obey', 'rb') as enc_file:
         encrypted = enc_file.read()
 
     ## Above opens key file, reads encrypted manifest, if valid then decrypts it
 
     decrypted = fernet.decrypt(encrypted)
 
-    with open('manifest.env', 'wb') as dec_file:
+    with open('manifest.obey', 'wb') as dec_file:
         dec_file.write(decrypted)
 
     ## The file is now decrypted and ready for deletion
 
-    with open('manifest.env', 'r+') as turn:
+    with open('manifest.obey', 'r+') as turn:
         e = turn.readlines()
         turn.seek(0)
         for line in e:
@@ -147,18 +157,20 @@ def gen():
     shuffle = [name, fav_number, color, phrase]
     random.shuffle(shuffle)
     result = ''.join(str(item) for item in shuffle)
-    console.print("[b][blue]Your new password is:[/] " + result +"$")
+    print(Panel.fit("\n[b][blue]Your new password is:[/] " + result +"$\n", box=box.ASCII))
 
 
-def gen_key():
-    keygen = input("Enter a 4-digit pin number or password to associate with your key file: > ")
+def gen_key(): 
+    console.print(Panel("[b][yellow]Enter a 4-digit pin number or password to associate with your key file[/]\n", padding=(2, 20)))
+    keygen = console.input("\n[b][yellow][r]>[/] ")
     user_key = open("stub.ini", "wb")
     encoded = base64.b64encode(keygen.encode("utf-8"))
     user_key.write(encoded)
+    os.system("attrib +h stub.ini")
     user_key.close()
-    with open('manifest.env', 'w') as f:
+    with open('manifest.obey', 'w') as f:
         f.write("")
     gen_enc_key()
     read_and_encrypt()
-    input("Key file successfully generated, Press enter to return to main menu")
+    input("Key file successfully generated, Press enter to enter vault menu")
     clear()

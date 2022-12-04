@@ -1,4 +1,4 @@
-## NoFrillsPasswordManager - Non-GUI Based, Alex Arias 10.27.2022
+## MANTRA - Non-GUI Based, Alex Arias 10.27.2022
 
 import requests
 import urllib.request
@@ -9,11 +9,10 @@ from rich.align import Align
 from rich import print
 from rich.prompt import Confirm
 from rich.table import Table
-from rich.layout import Layout
 from rich.panel import Panel
 from vault import *
 
-currentVersion = '0.8.9'
+currentVersion = '0.8.9-dev'
 console = Console()
 
 def get_update():
@@ -42,7 +41,7 @@ def get_update():
             print("Invalid option!")
             quit()
 
-console.print("[red]NoFrillsPasswordManager (non-GUI)[/] :key: by Alex A", style="bold", justify="center")
+console.print("[red]MANTRA Password Manager(CLI)[/] :key: by Alex A", style="bold", justify="center")
 print()
 console.print("[r][b]Press enter to continue[/]", justify="center")
 input()
@@ -56,9 +55,21 @@ menu_prompts = [
     "(4) Quit"
 ]
 
+vault_prompts = [
+    "(1) View Passwords\n"
+    "(2) Store new Passwords\n"
+    "(3) Generate a new Storage key\n"
+    "(4) Delete Entries\n"
+    "(5) Return to Main Menu\n"
+    "(6) Quit",
+
+    "[b][red]A valid keyfile was not found, to access the vault securely, please create one.[/]\n\nPress [b][green]Enter[/] to generate a key",
+
+]
+
 choice_prompts = [
-    "Press 1 to return to main menu, or press 2 and press Enter to shuffle generated password: > ",
-    "Press 1 to shuffle again, or press 2 and press Enter to return to main menu: > ",
+    "Return to main menu? Choosing 'No' will shuffle generated password again",
+    "Press Y to return to main menu, or N to shuffle again",
 
 ]
 
@@ -76,7 +87,7 @@ newpass_prompts = [
 ## Runtime Vars
 menu_choice = ""
 exist = os.path.exists("stub.ini")
-does_manifest_exist = os.path.exists('manifest.env')
+does_manifest_exist = os.path.exists('manifest.obey')
 does_stub_exist = exist ## Returns boolean value
 main = True
 key = False
@@ -93,8 +104,8 @@ menu_stage = 0
 ##--MAIN MENU STAGE--##
 while main:
     clear()
-    print(Panel(menu_prompts[0], title="Main Menu", subtitle="v1.0.0", padding=(2, 25), highlight=True))
-
+    print(Panel.fit(menu_prompts[0], title="Main Menu", subtitle="v0.8.9-dev", padding=(2, 25)))
+    
     menu_choice = int()
     
     try:
@@ -130,30 +141,21 @@ while main:
         vault.fav_number = console.input(newpass_prompts[2])
         vault.color = console.input(newpass_prompts[3])
         vault.phrase = console.input(newpass_prompts[4])
-        console.print("[b][green]Generating...[/]")
+        console.print("\n[b][green]Generating...[/]")
         time.sleep(0.5)
-        print()
         gen()
-        print()
-        try:
-            menu_choice = int(input(choice_prompts[0]))
-        except ValueError:
-            print("Invalid input! Press enter to return to main menu")
-            input()
+        
+        menu_choice = Confirm.ask(choice_prompts[0])
+    
 
-
-        if menu_choice == 1:
+        if menu_choice:
             menu_stage = menu_stage - 1
             break
 
-        if menu_choice == 2:
+        elif menu_choice is not True:
             menu_stage = menu_stage + 1
             break
 
-        if menu_choice > 2 or menu_choice < 1:
-            input("Invalid Choice! Press enter to return to main menu")
-            menu_stage = menu_stage - 1
-            break
 
 
 ##---SHUFFLE STAGE---##
@@ -163,25 +165,17 @@ while main:
         gen()
         shuffle_sub = int()
 
-        try:
-            shuffle_sub = int(input(choice_prompts[1]))
-        except ValueError:
-            print("Not a valid option, press enter to re-roll")
-            input()
-            clear()
+        shuffle_sub = Confirm.ask(choice_prompts[1])
 
-        if shuffle_sub == 1:
-            clear()
-            gen()
 
-        if shuffle_sub == 2:
+        if shuffle_sub:
             clear()
             menu_stage = menu_stage - 2
 
-        if shuffle_sub > 2 or shuffle_sub < 1:
-            print("Invalid option!")
-            input("Press enter to shuffle again")
+        elif shuffle_sub is not True:
             clear()
+            gen()
+
 
 
 ##---VAULT MAIN MENU AND KEY CHECK---#
@@ -193,25 +187,17 @@ while main:
 
         else:
             clear()
-            print("You do not have a key file, to access the vault securely, please create one.")
-            input("Press enter to create one")
+            console.input(Panel(vault_prompts[1], title="Unauthorized Access!", padding=(2, 20)))
             key = True
             clear()
             gen_key()
 
         while key:
             clear()
-            print("Welcome to Your Vault")
-            print("(1) View Passwords")
-            print("(2) Store new Passwords")
-            print("(3) Generate a new Storage key")
-            print("(4) Delete Entries")
-            print("(5) Return to Main Menu")
-            print("(6) Quit")
-            print()
+            print(Panel(vault_prompts[0], title="Vault Menu", padding=(2, 25), box=box.ASCII_DOUBLE_HEAD, highlight=True, style="red"))
 
             try:
-                vault_choice = int(input("Enter a choice: > "))
+                vault_choice = int(console.input("[b][yellow][r]Choice: >[/] "))
 
             except ValueError:
                 input("Invalid choice! Press enter to continue")
@@ -220,31 +206,29 @@ while main:
             if vault_choice == 1:
                 clear()
                 b64_decode()
-                try:
-                    pin_check = int(input("Enter your pin: > "))
-                except ValueError:
-                    input("Invalid option! Press enter to continue...")
-                    clear()
-                    break
+                
+                pin_check = console.input("Enter your [b][red]pin[/] or [b][red]secret phrase[/]: > ")
 
-                if pin_check == int(vault.secretKey):
+                if pin_check == (vault.secretKey):
                     clear()
                     decrypt()
                     print()
-                    input("\nPress any key to return to main menu..")
+                    input("\nPress enter to return to main menu..")
 
                 else:
-                    input("Pin does not match the set pin! Press enter to continue")
                     clear()
+                    console.input(Panel.fit("[b][red]Input did not match the set pin/passphrase![/]\n\nPress enter to continue", title="Invalid Pin or Passphrase", padding=(2, 25)))
+                    #input("Pin does not match the set pin! Press enter to continue")
 
             elif vault_choice == 2:
                 clear()
                 vault_add_Pass()
-                input("\nPassword successfully stored\n Press Enter to return to vault menu")
+                print(Panel.fit("[b][green]Password successfully stored![/] Returning to vault menu...", box=box.ASCII))
+                time.sleep(3)
 
 
             elif vault_choice == 3:
-                os.remove('manifest.env')
+                os.remove('manifest.obey')
                 os.remove('vault.key')
                 os.remove('stub.ini')
                 gen_key()
